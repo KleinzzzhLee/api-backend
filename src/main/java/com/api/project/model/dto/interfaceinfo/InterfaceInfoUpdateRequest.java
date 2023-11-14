@@ -59,6 +59,12 @@ public class InterfaceInfoUpdateRequest implements Serializable {
     @ApiModelProperty("请求头")
     private String requestHeader;
     /**
+     * 请求参数
+     */
+    @Size(max= -1,message="编码长度不能超过-1")
+    @ApiModelProperty("请求参数")
+    private String requestParams;
+    /**
      * 响应头
      */
     @Size(max= -1,message="编码长度不能超过-1")

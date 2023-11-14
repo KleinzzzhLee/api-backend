@@ -1,5 +1,7 @@
 package com.api.project.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.api.project.common.ErrorCode;
 import com.api.project.constant.UserConstant;
 import com.api.project.exception.BusinessException;
@@ -33,7 +35,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 盐值，混淆密码
      */
-    private static final String SALT = "yupi";
+    private static final String SALT = "zzzhlee";
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -61,10 +63,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
-            // 3. 插入数据
+            // 3、分配 appKey 和 appSecret
+            String appKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomString(3));
+            String appSecret = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomString(8));
+            // 4. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setAppKey(appKey);
+            user.setAppSecret(appSecret);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
@@ -93,6 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userPassword", encryptPassword);
         User user = userMapper.selectOne(queryWrapper);
         // 用户不存在
+
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");

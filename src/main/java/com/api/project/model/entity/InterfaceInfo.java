@@ -7,12 +7,19 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
 * api.`InterfaceInfo` 接口信息表
 * @TableName InterfaceInfo
 */
+@Data
+@TableName("interface_info")
 public class InterfaceInfo implements Serializable {
 
     /**
@@ -20,6 +27,7 @@ public class InterfaceInfo implements Serializable {
     */
     @NotNull(message="[主键]不能为空")
     @ApiModelProperty("主键")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**
     * 接口名称
@@ -54,6 +62,13 @@ public class InterfaceInfo implements Serializable {
     @NotNull(message="[创建人]不能为空")
     @ApiModelProperty("创建人")
     private Long userId;
+
+    /**
+     * 请求参数
+     */
+    @Size(max= -1,message="编码长度不能超过-1")
+    @ApiModelProperty("请求参数")
+    private String requestParams;
     /**
     * 请求头
     */

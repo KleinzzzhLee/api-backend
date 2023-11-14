@@ -62,6 +62,17 @@ public class    InterfaceInfoAddRequest implements Serializable {
     @ApiModelProperty("请求头")
     private String requestHeader;
     /**
+     * 请求参数
+     *  请求参数的说明，对于请求参数，传递的时候一定是JSON的数据格式，可以在后端根据 指定的类型进行转换。
+     *  如：
+     *      [
+     *          {"name" : "paramName", "type" : "paramType"}
+     *      ]
+     */
+    @Size(max= -1,message="编码长度不能超过-1")
+    @ApiModelProperty("请求参数")
+    private String requestParams;
+    /**
      * 响应头
      */
     @Size(max= -1,message="编码长度不能超过-1")

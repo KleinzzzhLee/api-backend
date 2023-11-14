@@ -7,7 +7,7 @@ use my_db;
 -- 用户表
 create table if not exists user
 (
-    id           bigint auto_increment comment 'id' primary key,
+        id           bigint auto_increment comment 'id' primary key,
     userName     varchar(256)                           null comment '用户昵称',
     userAccount  varchar(256)                           not null comment '账号',
     userAvatar   varchar(1024)                          null comment '用户头像',

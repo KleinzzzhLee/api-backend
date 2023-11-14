@@ -10,14 +10,17 @@ import com.api.project.constant.UserConstant;
 import com.api.project.exception.BusinessException;
 import com.api.project.exception.ThrowUtils;
 import com.api.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.api.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.api.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.api.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
+import com.api.project.model.entity.IdRequest;
 import com.api.project.model.entity.InterfaceInfo;
 import com.api.project.model.entity.User;
 import com.api.project.service.InterfaceInfoService;
 import com.api.project.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.apiclientsdk.clients.ApiClient;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +48,9 @@ public class InterfaceInfoController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private ApiClient apiClient;
+
     private final static Gson GSON = new Gson();
 
     // region 增删改查
@@ -67,7 +73,7 @@ public class InterfaceInfoController {
         interfaceInfoService.validInterfaceInfo(interfaceInfo, true);
         User loginUser = userService.getLoginUser(request);
         interfaceInfo.setUserId(loginUser.getId());
-
+//        boolean result = interfaceInfoService.save(interfaceInfo);
         boolean result = interfaceInfoService.save(interfaceInfo);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         long newInterfaceInfoId = interfaceInfo.getId();
@@ -90,7 +96,9 @@ public class InterfaceInfoController {
         long id = deleteRequest.getId();
         // 判断是否存在
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
+        if(oldInterfaceInfo == null) {
+            ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
+        }
         // 仅本人或管理员可删除
         if (!oldInterfaceInfo.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
@@ -182,5 +190,100 @@ public class InterfaceInfoController {
         Page<InterfaceInfo> page = new Page<>(current, pageSize);
         Page<InterfaceInfo> result = interfaceInfoService.page(page, wrapper);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 将接口上线（仅管理员）
+     *      将一个接口上线，考虑过程:
+     *          1、在数据库中查询该接口是否存在
+     *          2、验证该接口是否可用
+     *          3、将数据库中的接口状态修改
+     *      此时，就数据库中查询某个接口的信息，便只需要将该接口的id传入即可
+     *
+     * @param idRequest
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterface(@RequestBody IdRequest idRequest) {
+        if(idRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 在数据库中查询该id是否存在
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(idRequest.getId());
+        if(interfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 验证此接口可以使用
+        com.example.apiclientsdk.model.User user = new com.example.apiclientsdk.model.User();
+        user.setName("test");
+        String username = apiClient.getUsernameByPost(user);
+        if(username == null) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        }
+
+        // 修改此接口的状态
+        interfaceInfo.setId(idRequest.getId());
+        interfaceInfo.setStatus(1);
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        if(!result) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        } else {
+            return ResultUtils.success(result);
+        }
+
+    }
+
+    /**
+     * 下线接口（仅管理员）
+     *
+     * @param idRequest
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> offlineInterface(@RequestBody IdRequest idRequest) {
+        // 查询该端口是否存在，
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(idRequest.getId());
+
+        if(interfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        // 对接口进行下线处理
+        interfaceInfo.setStatus(0);
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        if(!result) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        } else {
+            return ResultUtils.success(result);
+        }
+
+    }
+
+
+
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest invokeRequest,
+                                                     HttpServletRequest request) {
+        if(invokeRequest == null || invokeRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 在数据库中查询该id是否存在,以及 该id对应的接口的状态
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(invokeRequest.getId());
+        if(interfaceInfo == null || interfaceInfo.getStatus() == 0) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "当前接口存在问题...");
+        }
+        // 进行接口的调用，通过封装的SDK：ApiClient
+        // 获得登录的用户， 得到其签名认证
+        User loginUser = userService.getLoginUser(request);
+        String appKey = loginUser.getAppKey();
+        String appSecret = loginUser.getAppSecret();
+
+        ApiClient apiClient = new ApiClient(appKey,appSecret);
+        Gson gson = new Gson();
+        com.example.apiclientsdk.model.User fromJson = gson.fromJson(invokeRequest.getUserRequestParams(), com.example.apiclientsdk.model.User.class);
+        String nameByPost = apiClient.getNameByPost(fromJson.getName());
+        return ResultUtils.success(nameByPost);
+
     }
 }
