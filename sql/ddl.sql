@@ -43,3 +43,17 @@ create table if not exists post
     updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete      tinyint  default 0                 not null comment '是否删除'
 ) comment '帖子';
+
+use api;
+-- 用户调用接口统计表
+create table if not exists user_interfaceInfo
+(
+    id           bigint auto_increment comment 'id' primary key,
+    userId      bigint  references user(id)     null comment '调用者id',
+    interfaceInfoId  bigint  references interface_info(id)   not null comment '接口id',
+    totalTimes   int              null comment '总调用次数',
+    leaveTimes   int              null comment '剩余调用次数',
+    createTime   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete     tinyint      default 0                 not null comment '是否删除'
+) comment '用户';

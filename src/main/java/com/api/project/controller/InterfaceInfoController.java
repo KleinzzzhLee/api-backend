@@ -282,7 +282,7 @@ public class InterfaceInfoController {
         ApiClient apiClient = new ApiClient(appKey,appSecret);
         Gson gson = new Gson();
         com.example.apiclientsdk.model.User fromJson = gson.fromJson(invokeRequest.getUserRequestParams(), com.example.apiclientsdk.model.User.class);
-        String nameByPost = apiClient.getNameByPost(fromJson.getName());
+        String nameByPost = apiClient.getUsernameByPost(fromJson);
         return ResultUtils.success(nameByPost);
 
     }
