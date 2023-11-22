@@ -4,10 +4,10 @@ import com.api.project.common.ErrorCode;
 import com.api.project.exception.BusinessException;
 import com.api.project.exception.ThrowUtils;
 import com.api.project.mapper.InterfaceInfoMapper;
-import com.api.project.model.entity.InterfaceInfo;
 import com.api.project.service.InterfaceInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import com.api.common.model.entity.InterfaceInfo;
 import org.springframework.stereotype.Service;
 
 @Service

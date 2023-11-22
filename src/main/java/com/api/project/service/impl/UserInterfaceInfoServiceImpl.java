@@ -4,12 +4,11 @@ import com.api.project.common.BaseResponse;
 import com.api.project.common.ErrorCode;
 import com.api.project.common.ResultUtils;
 import com.api.project.exception.BusinessException;
-import com.api.project.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
 import com.api.project.service.UserInterfaceInfoService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.api.project.model.entity.UserInterfaceInfo;
 import com.api.project.mapper.UserInterfaceInfoMapper;
+import com.api.common.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,7 +33,7 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
     }
 
     @Override
-    public BaseResponse<Boolean> invoke(long interfaceInfoId, long userId) {
+    public boolean invoke(long interfaceInfoId, long userId) {
         // 判断这两是否合法
         if(interfaceInfoId <=0 || userId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -56,7 +55,7 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         if(!index) {
             throw new BusinessException(-1,"更新异常");
         }
-        return ResultUtils.success(true);
+        return true;
     }
 }
 

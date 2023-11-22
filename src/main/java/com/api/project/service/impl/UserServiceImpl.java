@@ -6,12 +6,12 @@ import com.api.project.common.ErrorCode;
 import com.api.project.constant.UserConstant;
 import com.api.project.exception.BusinessException;
 import com.api.project.mapper.UserMapper;
-import com.api.project.model.entity.User;
 import com.api.project.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import com.api.common.model.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 

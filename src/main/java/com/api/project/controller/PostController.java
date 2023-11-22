@@ -9,8 +9,6 @@ import com.api.project.exception.BusinessException;
 import com.api.project.model.dto.post.PostAddRequest;
 import com.api.project.model.dto.post.PostQueryRequest;
 import com.api.project.model.dto.post.PostUpdateRequest;
-import com.api.project.model.entity.Post;
-import com.api.project.model.entity.User;
 import com.api.project.service.PostService;
 import com.api.project.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,6 +16,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.api.project.annotation.AuthCheck;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import com.api.common.model.entity.Post;
+import com.api.common.model.entity.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 

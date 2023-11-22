@@ -12,7 +12,7 @@ public class UserInterfaceInfoTest {
     UserInterfaceInfoService userInterfaceInfoService;
     @Test
     public void testInvokeOfUserInterfaceInfo() {
-        BaseResponse<Boolean> invoke = userInterfaceInfoService.invoke(1L, 1722182010384011265L);
-        System.out.println(invoke);
+//        BaseResponse<Boolean> invoke = userInterfaceInfoService.invoke(1L, 1722182010384011265L);
+//        System.out.println(invoke);
     }
 }

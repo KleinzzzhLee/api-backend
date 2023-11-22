@@ -13,8 +13,6 @@ import com.api.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.api.project.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
 import com.api.project.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
 
-import com.api.project.model.entity.User;
-import com.api.project.model.entity.UserInterfaceInfo;
 import com.api.project.service.UserInterfaceInfoService;
 import com.api.project.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,6 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.api.common.model.entity.User;
+import com.api.common.model.entity.UserInterfaceInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 

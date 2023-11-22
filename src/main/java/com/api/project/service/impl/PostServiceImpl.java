@@ -2,7 +2,6 @@ package com.api.project.service.impl;
 
 import com.api.project.common.ErrorCode;
 import com.api.project.mapper.PostMapper;
-import com.api.project.model.entity.Post;
 import com.api.project.model.enums.PostGenderEnum;
 import com.api.project.model.enums.PostReviewStatusEnum;
 import com.api.project.service.PostService;
@@ -10,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.api.project.exception.BusinessException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import com.api.common.model.entity.Post;
 import org.springframework.stereotype.Service;
 
 /**

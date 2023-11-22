@@ -1,9 +1,8 @@
 package com.api.project.service;
 
 import com.api.project.common.BaseResponse;
-import com.api.project.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
-import com.api.project.model.entity.UserInterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.api.common.model.entity.UserInterfaceInfo;
 
 /**
 * @author Lzzh
@@ -13,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
     void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add);
 
-    BaseResponse<Boolean> invoke(long interfaceInfoId, long userId);
+    boolean invoke(long interfaceInfoId, long userId);
 }
